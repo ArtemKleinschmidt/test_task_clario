@@ -1,0 +1,12 @@
+{
+  "signUp": "Sign Up",
+  "email": "Email",
+  "password": "Password",
+  "eightCharactersOrMore": "8 characters or more (no spaces)",
+  "sixtyFourCharactersOrLess": "64 characters or less",
+  "atLeastOneUpperCaseLetter": "At least one uppercase letter",
+  "atLeastOneDigit": "At least one digit",
+  "success": "Success",
+  "signUpSuccessMessage": "Sign up successful",
+  "ok": "OK"
+}
