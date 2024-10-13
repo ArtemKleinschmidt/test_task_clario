@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:test_task_clario/common/presentation/ui/colors.dart';
 
 import 'common/di/injectible_init.dart';
 import 'features/sign_up/presentation/ui/sign_up_screen.dart';
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
         Locale('en'),
       ],
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.blue1),
         useMaterial3: true,
       ),
       home: const MyHomePage(),

@@ -1,5 +1,5 @@
 {
-  "signUp": "Sign Up",
+  "signUp": "Sign up",
   "email": "Email",
   "password": "Password",
   "eightCharactersOrMore": "8 characters or more (no spaces)",
@@ -8,5 +8,6 @@
   "atLeastOneDigit": "At least one digit",
   "success": "Success",
   "signUpSuccessMessage": "Sign up successful",
-  "ok": "OK"
+  "ok": "OK",
+  "createYourPassword": "Create your password"
 }

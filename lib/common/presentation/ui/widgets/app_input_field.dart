@@ -1,25 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:test_task_clario/common/presentation/assets/drawable.dart';
 
-class InputField extends StatefulWidget {
-  const InputField(
+import '../colors.dart';
+
+class AppInputField extends StatefulWidget {
+  const AppInputField(
       {super.key,
       this.showHideIcon = false,
       this.isError = false,
       this.isSuccess = false,
       this.focusNode,
-      this.textEditingController});
+      this.textEditingController,
+      this.hintText});
 
   final bool showHideIcon;
   final bool isError;
   final bool isSuccess;
   final FocusNode? focusNode;
   final TextEditingController? textEditingController;
+  final String? hintText;
 
   @override
-  State<InputField> createState() => _InputFieldState();
+  State<AppInputField> createState() => _AppInputFieldState();
 }
 
-class _InputFieldState extends State<InputField> {
+class _AppInputFieldState extends State<AppInputField> {
   bool _isTextVisible = false;
   late final FocusNode _focusNode;
 
@@ -45,7 +51,8 @@ class _InputFieldState extends State<InputField> {
       alignment: Alignment.centerLeft,
       padding: const EdgeInsets.only(left: 16),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
+        color: _backgroundColor(widget.isError),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: _borderColor(_focusNode,
               isError: widget.isError, isSuccess: widget.isSuccess),
@@ -56,9 +63,11 @@ class _InputFieldState extends State<InputField> {
           Align(
             alignment: Alignment.centerLeft,
             child: TextField(
+              decoration: InputDecoration.collapsed(
+                hintText: widget.hintText,
+              ),
               controller: widget.textEditingController,
               focusNode: _focusNode,
-              decoration: null,
               obscureText: widget.showHideIcon && !_isTextVisible,
             ),
           ),
@@ -66,9 +75,17 @@ class _InputFieldState extends State<InputField> {
             Align(
               alignment: Alignment.centerRight,
               child: IconButton(
-                icon: Icon(
-                  _isTextVisible ? Icons.visibility : Icons.visibility_off,
-                ),
+                icon: _isTextVisible
+                    ? SvgPicture.asset(
+                        AppDrawable.icShowPassword,
+                        colorFilter:
+                            ColorFilter.mode(_iconColor, BlendMode.srcIn),
+                      )
+                    : SvgPicture.asset(
+                        AppDrawable.icHidePassword,
+                        colorFilter:
+                            ColorFilter.mode(_iconColor, BlendMode.srcIn),
+                      ),
                 onPressed: () {
                   setState(() {
                     _isTextVisible = !_isTextVisible;
@@ -81,17 +98,21 @@ class _InputFieldState extends State<InputField> {
     );
   }
 
+  Color get _iconColor => widget.isError ? AppColors.red : AppColors.blueGrey;
+
   Color _borderColor(FocusNode focusNode,
       {required bool isError, required bool isSuccess}) {
     if (isError) {
-      return const Color(0xFFE53935);
+      return AppColors.red;
     }
     if (isSuccess) {
-      return const Color(0xFF2E7D32);
+      return AppColors.green;
     }
 
-    return focusNode.hasFocus
-        ? const Color(0xFF000000)
-        : const Color(0xFFBBDEFB);
+    return focusNode.hasFocus ? AppColors.blueGrey : AppColors.white;
+  }
+
+  _backgroundColor(bool isError) {
+    return isError ? AppColors.pink : AppColors.white;
   }
 }
