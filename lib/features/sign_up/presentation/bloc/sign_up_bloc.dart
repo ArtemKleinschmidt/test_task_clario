@@ -11,40 +11,39 @@ part 'sign_up_state.dart';
 
 @injectable
 class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
-  final Validator validator;
+  final Validator _validator;
 
-  SignUpBloc(this.validator) : super(const SignUpInitial()) {
-    on<SignUpEvent>((event, emit) {
-      _processEvent(event, emit);
+  SignUpBloc(this._validator) : super(const SignUpInitial()) {
+    on<SignUpEmailPasswordEvent>((event, emit) {
+      _onSignUpEmailPasswordEvent(event, emit);
+    });
+    on<DialogDismissedEvent>((event, emit) {
+      _onDialogDismissedEvent(event, emit);
     });
   }
 
-  void _processEvent(SignUpEvent event, Emitter<SignUpState> emit) {
-    switch (event) {
-      case SignUpEmailPasswordEvent():
-        final SignUpEmailPasswordEvent emailPasswordEvent = event;
-        final String email = emailPasswordEvent.email;
-        final String password = emailPasswordEvent.password;
+  void _onSignUpEmailPasswordEvent(
+      SignUpEmailPasswordEvent event, Emitter<SignUpState> emit) {
+    final SignUpEmailPasswordEvent emailPasswordEvent = event;
+    final String email = emailPasswordEvent.email;
+    final String password = emailPasswordEvent.password;
 
-        final emailValidationResult = validator.validateEmail(email);
-        final passwordValidationResult = validator.validatePassword(password);
+    final emailValidationResult = _validator.validateEmail(email);
+    final passwordValidationResult = _validator.validatePassword(password);
 
-        if (emailValidationResult == EmailValidationResult.valid &&
-            passwordValidationResult.isValid) {
-          emit(const SignUpSuccessState(showSuccessMessage: true));
-        } else {
-          emit(SignUpErrorState(
-            emailValidationResult: emailValidationResult,
-            passwordValidationResults: passwordValidationResult,
-          ));
-        }
-
-      case DialogDismissedEvent():
-        emit(const SignUpSuccessState(showSuccessMessage: false));
-        break;
-
-      default:
-        throw Exception('Unknown event: $event');
+    if (emailValidationResult == EmailValidationResult.valid &&
+        passwordValidationResult.isValid) {
+      emit(const SignUpSuccessState(showSuccessMessage: true));
+    } else {
+      emit(SignUpErrorState(
+        emailValidationResult: emailValidationResult,
+        passwordValidationResults: passwordValidationResult,
+      ));
     }
+  }
+
+  void _onDialogDismissedEvent(
+      DialogDismissedEvent event, Emitter<SignUpState> emit) {
+    emit(const SignUpSuccessState(showSuccessMessage: false));
   }
 }
