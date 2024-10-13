@@ -4,6 +4,7 @@ final class AppColors {
   AppColors._();
 
   static const green = Color(0xFF27B274);
+  static const green70 = Color(0xB227B274);
   static const white = Color(0xFFFFFFFF);
   static const transparent = Color(0x00000000);
   static const darkViolet = Color(0xFF4A4E71);

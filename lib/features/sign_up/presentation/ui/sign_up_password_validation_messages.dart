@@ -7,7 +7,7 @@ class _PasswordValidationMessages extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool tooShortPassword = false;
+    bool tooShortOrSpacesPassword = false;
     bool tooLongPassword = false;
     bool noUppercasePassword = false;
     bool noDigitPassword = false;
@@ -16,8 +16,9 @@ class _PasswordValidationMessages extends StatelessWidget {
 
     if (state is SignUpErrorState) {
       if (state.passwordValidationResults.tooShort ||
+          state.passwordValidationResults.spaces ||
           state.passwordValidationResults.empty) {
-        tooShortPassword = true;
+        tooShortOrSpacesPassword = true;
       }
       if (state.passwordValidationResults.tooLong ||
           state.passwordValidationResults.empty) {
@@ -33,36 +34,32 @@ class _PasswordValidationMessages extends StatelessWidget {
       }
     }
 
-    final nonErrorColor = state is SignUpInitial
-        ? Colors.black.withOpacity(0.6)
-        : AppColors.green;
+    final nonErrorStyle = state is SignUpInitial
+        ? AppTextStyles.smallTextDefault
+        : AppTextStyles.smallTextSuccess;
 
     return SizedBox(
       width: double.infinity,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(
           context.l10n.eightCharactersOrMore,
-          style: TextStyle(
-            color: tooShortPassword ? Colors.red : nonErrorColor,
-          ),
+          style: tooShortOrSpacesPassword
+              ? AppTextStyles.smallTextError
+              : nonErrorStyle,
         ),
         Text(
           context.l10n.sixtyFourCharactersOrLess,
-          style: TextStyle(
-            color: tooLongPassword ? Colors.red : nonErrorColor,
-          ),
+          style: tooLongPassword ? AppTextStyles.smallTextError : nonErrorStyle,
         ),
         Text(
           context.l10n.atLeastOneUpperCaseLetter,
-          style: TextStyle(
-            color: noUppercasePassword ? Colors.red : nonErrorColor,
-          ),
+          style: noUppercasePassword
+              ? AppTextStyles.smallTextError
+              : nonErrorStyle,
         ),
         Text(
           context.l10n.atLeastOneDigit,
-          style: TextStyle(
-            color: noDigitPassword ? Colors.red : nonErrorColor,
-          ),
+          style: noDigitPassword ? AppTextStyles.smallTextError : nonErrorStyle,
         ),
       ]),
     );

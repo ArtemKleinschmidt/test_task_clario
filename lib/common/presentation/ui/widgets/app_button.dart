@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_task_clario/common/presentation/ui/text_styles.dart';
 
 import '../colors.dart';
 
@@ -28,11 +29,7 @@ class AppButton extends StatelessWidget {
           ),
           borderRadius: BorderRadius.circular(30.0),
         ),
-        child: Text(text,
-            style: const TextStyle(
-                color: AppColors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold)),
+        child: Text(text, style: AppTextStyles.buttonText),
       ),
     );
   }

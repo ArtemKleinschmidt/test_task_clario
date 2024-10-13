@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:test_task_clario/common/presentation/assets/drawable.dart';
 
 import '../colors.dart';
+import '../text_styles.dart';
 
 class AppInputField extends StatefulWidget {
   const AppInputField(
@@ -63,8 +64,14 @@ class _AppInputFieldState extends State<AppInputField> {
           Align(
             alignment: Alignment.centerLeft,
             child: TextField(
+              style: widget.isError
+                  ? AppTextStyles.inputError
+                  : widget.isSuccess
+                      ? AppTextStyles.inputSuccess
+                      : AppTextStyles.inputDefault,
               decoration: InputDecoration.collapsed(
                 hintText: widget.hintText,
+                hintStyle: AppTextStyles.hintStyle,
               ),
               controller: widget.textEditingController,
               focusNode: _focusNode,

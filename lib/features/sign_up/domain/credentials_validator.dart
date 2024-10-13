@@ -43,6 +43,10 @@ class Validator {
       validationResults.add(PasswordValidationResult.noDigit);
     }
 
+    if (password.contains(RegExp(r'\s'))) {
+      validationResults.add(PasswordValidationResult.spaces);
+    }
+
     if (validationResults.isEmpty) {
       return [PasswordValidationResult.valid];
     } else {
