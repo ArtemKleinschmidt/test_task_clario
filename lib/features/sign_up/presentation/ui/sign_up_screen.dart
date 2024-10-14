@@ -24,9 +24,8 @@ class SignUpScreen extends StatefulWidget {
 class SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final FocusNode emailFocusNode = FocusNode();
-  final FocusNode passwordFocusNode = FocusNode();
   bool _showingDialog = false;
+  late double statusBarHeight;
 
   bool isEmailValid(SignUpState state) {
     if (state is SignUpErrorState) {
@@ -40,17 +39,6 @@ class SignUpScreenState extends State<SignUpScreen> {
       return state.passwordValidationResults.isValid;
     }
     return state is SignUpSuccessState;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    emailFocusNode.addListener(() {
-      setState(() {});
-    });
-    passwordFocusNode.addListener(() {
-      setState(() {});
-    });
   }
 
   void _showSuccessDialog(BuildContext context, SignUpBloc signUpBloc) {
@@ -67,17 +55,19 @@ class SignUpScreenState extends State<SignUpScreen> {
             TextButton(
               child: Text(context.l10n.ok),
               onPressed: () {
-                setState(() {
-                  _showingDialog = false;
-                });
                 Navigator.of(context).pop();
-                signUpBloc.add(const DialogDismissedEvent());
               },
             ),
           ],
         );
       },
-    );
+    ).then((value) {
+      // This block is executed when the dialog is dismissed
+      setState(() {
+        _showingDialog = false;
+      });
+      signUpBloc.add(const DialogDismissedEvent());
+    });
   }
 
   @override
@@ -89,86 +79,98 @@ class SignUpScreenState extends State<SignUpScreen> {
         systemNavigationBarColor: AppColors.lightBlue2,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
-      child: SafeArea(
-        child: Scaffold(
-          body: BlocProvider(
-            create: (context) => getIt<SignUpBloc>(),
-            child: BlocBuilder<SignUpBloc, SignUpState>(
-              builder: (context, state) {
-                final signUpBloc = BlocProvider.of<SignUpBloc>(context);
-                if (state is SignUpSuccessState && state.showSuccessMessage) {
-                  Future.microtask(() {
-                    if (context.mounted && !_showingDialog) {
-                      _showSuccessDialog(context, signUpBloc);
-                    }
-                  });
-                }
-                return Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        AppColors.lightBlue1,
-                        AppColors.lightBlue2,
-                      ],
-                    ),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const SizedBox(
-                        height: 120,
-                      ),
-                      Text(
-                        context.l10n.signUp,
-                        style: AppTextStyles.title,
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 32),
-                      AppInputField(
-                        isError: state is SignUpErrorState &&
-                            state.emailValidationResult !=
-                                EmailValidationResult.valid,
-                        isSuccess: isEmailValid(state),
-                        textEditingController: emailController,
-                        hintText: context.l10n.email,
-                      ),
-                      const SizedBox(height: 20),
-                      AppInputField(
-                        showHideIcon: true,
-                        isError: state is SignUpErrorState &&
-                            !state.passwordValidationResults.isValid,
-                        isSuccess: isPasswordValid(state),
-                        textEditingController: passwordController,
-                        hintText: context.l10n.createYourPassword,
-                      ),
-                      const SizedBox(height: 20),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: _PasswordValidationMessages(state),
-                      ),
-                      const SizedBox(height: 40),
-                      AppButton(
-                        context.l10n.signUp,
-                        onTap: () {
-                          signUpBloc.add(
-                            SignUpEmailPasswordEvent(
-                              email: emailController.text,
-                              password: passwordController.text,
-                            ),
-                          );
-                        },
-                      ),
+      child: Scaffold(
+        body: BlocProvider(
+          create: (context) => getIt<SignUpBloc>(),
+          child: BlocBuilder<SignUpBloc, SignUpState>(
+            builder: (context, state) {
+              final signUpBloc = BlocProvider.of<SignUpBloc>(context);
+              if (state is SignUpSuccessState && state.showSuccessMessage) {
+                Future.microtask(() {
+                  if (context.mounted && !_showingDialog) {
+                    _showSuccessDialog(context, signUpBloc);
+                  }
+                });
+              }
+              return Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      AppColors.lightBlue1,
+                      AppColors.lightBlue2,
                     ],
                   ),
-                );
-              },
-            ),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 120 + statusBarHeight,
+                    ),
+                    Text(
+                      context.l10n.signUp,
+                      style: AppTextStyles.title,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 32),
+                    AppInputField(
+                      isError: state is SignUpErrorState &&
+                          state.emailValidationResult !=
+                              EmailValidationResult.valid,
+                      isSuccess: isEmailValid(state),
+                      textEditingController: emailController,
+                      hintText: context.l10n.email,
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    const SizedBox(height: 20),
+                    AppInputField(
+                      showHideIcon: true,
+                      isError: state is SignUpErrorState &&
+                          !state.passwordValidationResults.isValid,
+                      isSuccess: isPasswordValid(state),
+                      textEditingController: passwordController,
+                      hintText: context.l10n.createYourPassword,
+                    ),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: _PasswordValidationMessages(state),
+                    ),
+                    const SizedBox(height: 40),
+                    AppButton(
+                      context.l10n.signUp,
+                      onTap: () {
+                        signUpBloc.add(
+                          SignUpEmailPasswordEvent(
+                            email: emailController.text,
+                            password: passwordController.text,
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    statusBarHeight = MediaQuery.of(context).padding.top;
   }
 }

@@ -13,7 +13,8 @@ class AppInputField extends StatefulWidget {
       this.isSuccess = false,
       this.focusNode,
       this.textEditingController,
-      this.hintText});
+      this.hintText,
+      this.keyboardType});
 
   final bool showHideIcon;
   final bool isError;
@@ -21,6 +22,7 @@ class AppInputField extends StatefulWidget {
   final FocusNode? focusNode;
   final TextEditingController? textEditingController;
   final String? hintText;
+  final TextInputType? keyboardType;
 
   @override
   State<AppInputField> createState() => _AppInputFieldState();
@@ -76,6 +78,7 @@ class _AppInputFieldState extends State<AppInputField> {
               controller: widget.textEditingController,
               focusNode: _focusNode,
               obscureText: widget.showHideIcon && !_isTextVisible,
+              keyboardType: widget.keyboardType,
             ),
           ),
           if (widget.showHideIcon)
